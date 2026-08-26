@@ -71,7 +71,7 @@ public class HandManager : MonoBehaviour
             Vector3 forward = spline.EvaluateTangent(p);
             Vector3 up = spline.EvaluateUpVector(p);
             Quaternion rotation = Quaternion.LookRotation(up, Vector3.Cross(up, forward).normalized);
-            handCards[i].transform.DOMove(splinePosition, 0.25f);
+            handCards[i].SetHandPosition(splinePosition);
             handCards[i].transform.DOLocalRotateQuaternion(rotation, 25f);
             handCards[i].SetSortingOrder(i);
         }
