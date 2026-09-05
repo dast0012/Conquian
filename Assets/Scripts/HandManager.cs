@@ -2,6 +2,8 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
 
@@ -21,8 +23,10 @@ public class HandManager : MonoBehaviour
 
     private void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
             DrawCard();
+
+        CheckForTouch();
     }
 
     IEnumerator Delay()
@@ -75,5 +79,50 @@ public class HandManager : MonoBehaviour
             handCards[i].transform.DOLocalRotateQuaternion(rotation, 25f);
             handCards[i].SetSortingOrder(i);
         }
+    }
+
+    // This method is called to lower all cards in the hand which is currently highlighted
+    public void ClearHoverCard()
+    {
+        foreach (Card card in handCards)
+        {
+            card.LowerCard();
+        }
+    }
+
+    // This method checks if the user has touched the screen and if the touch is not on any card, it clears the hover state of all cards
+    private void CheckForTouch()
+    {
+        if (Touchscreen.current == null)
+            return;
+
+        if (!Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+            return;
+
+        Vector2 touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+
+        pointerData.position = touchPosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        bool touchedCard = false;
+
+        foreach (RaycastResult result in results)
+        {
+            Card card = result.gameObject.GetComponentInParent<Card>();
+
+            if (card != null)
+            {
+                touchedCard = true;
+                break;
+            }
+        }
+
+        if (!touchedCard)
+            ClearHoverCard();
     }
 }

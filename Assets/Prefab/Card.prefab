@@ -152,3 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b46ea75a7688f3148ab6b4f72998fb0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
+  hoverHeight: 0.5
+  hoverDuration: 0.15
+  longPressDuration: 0.17
+  dragStartDistance: 20
